@@ -742,20 +742,19 @@ Result DeleteDynamicTexture(HScene scene, const dmhash_t texture_hash)
         return *font;
     }
 
-    Result AddMaterial(HScene scene, const char* material_name, void* material)
+    Result AddMaterial(HScene scene, dmhash_t material_id, void* material)
     {
         if (scene->m_Materials.Full())
         {
             return RESULT_OUT_OF_RESOURCES;
         }
 
-        uint64_t name_hash = dmHashString64(material_name);
-        scene->m_Materials.Put(name_hash, (dmRender::HMaterial) material);
+        scene->m_Materials.Put(material_id, (dmRender::HMaterial) material);
 
         InternalNode* nodes = scene->m_Nodes.Begin();
         for (uint32_t i = 0; i < scene->m_Nodes.Size(); ++i)
         {
-            if (nodes[i].m_Node.m_MaterialNameHash == name_hash)
+            if (nodes[i].m_Node.m_MaterialNameHash == material_id)
             {
                 nodes[i].m_Node.m_Material = material;
             }
@@ -766,12 +765,12 @@ Result DeleteDynamicTexture(HScene scene, const dmhash_t texture_hash)
 
     void* GetMaterial(HScene scene, dmhash_t material_hash)
     {
-        void** material = scene->m_Materials.Get(material_hash);
+        dmRender::HMaterial* material = scene->m_Materials.Get(material_hash);
         if (!material)
         {
             return 0;
         }
-        return *material;
+        return (void*) *material;
     }
 
     Result AddParticlefx(HScene scene, const char* particlefx_name, void* particlefx_prototype)

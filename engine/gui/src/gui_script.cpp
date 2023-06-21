@@ -1885,6 +1885,40 @@ namespace dmGui
         return 1;
     }
 
+    static int LuaGetMaterial(lua_State* L)
+    {
+        Scene* scene = GuiScriptInstance_Check(L);
+
+        HNode hnode;
+        InternalNode* n = LuaCheckNodeInternal(L, 1, &hnode);
+        (void)n;
+
+        dmScript::PushHash(L, dmGui::GetNodeMaterialId(scene, hnode));
+
+        return 1;
+    }
+
+    static int LuaSetMaterial(lua_State* L)
+    {
+        int top = lua_gettop(L);
+        (void) top;
+
+        Scene* scene = GuiScriptInstance_Check(L);
+
+        HNode hnode;
+        InternalNode* n = LuaCheckNodeInternal(L, 1, &hnode);
+        (void)n;
+
+        dmhash_t material_id = dmScript::CheckHashOrString(L, 2);
+
+        if (SetNodeMaterial(scene, hnode, material_id) != RESULT_OK)
+        {
+            luaL_error(L, "Material '%s' is not specified in scene", dmHashReverseSafe64(material_id));
+        }
+        assert(top == lua_gettop(L));
+        return 0;
+    }
+
     /*# gets the node font
      * This is only useful for text nodes. The font must be mapped to the gui scene in the gui editor.
      *
@@ -4246,6 +4280,8 @@ namespace dmGui
         {"new_texture",     LuaNewTexture},
         {"delete_texture",  LuaDeleteTexture},
         {"set_texture_data",LuaSetTextureData},
+        {"get_material",    LuaGetMaterial},
+        {"set_material",    LuaSetMaterial},
         {"get_font",        LuaGetFont},
         {"get_font_resource", LuaGetFontResource},
         {"set_font",        LuaSetFont},

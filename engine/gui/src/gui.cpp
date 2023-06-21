@@ -764,6 +764,16 @@ Result DeleteDynamicTexture(HScene scene, const dmhash_t texture_hash)
         return RESULT_OK;
     }
 
+    void* GetMaterial(HScene scene, dmhash_t material_hash)
+    {
+        void** material = scene->m_Materials.Get(material_hash);
+        if (!material)
+        {
+            return 0;
+        }
+        return *material;
+    }
+
     Result AddParticlefx(HScene scene, const char* particlefx_name, void* particlefx_prototype)
     {
         if (scene->m_Particlefxs.Full())
@@ -2916,6 +2926,12 @@ Result DeleteDynamicTexture(HScene scene, const dmhash_t texture_hash)
         return n->m_Node.m_Properties[PROPERTY_TEXT_PARAMS].getY();
     }
 
+    dmhash_t GetNodeMaterialId(HScene scene, HNode node)
+    {
+        InternalNode* n = GetNode(scene, node);
+        return n->m_Node.m_MaterialNameHash;
+    }
+
     void* GetNodeMaterial(HScene scene, HNode node)
     {
         InternalNode* n = GetNode(scene, node);
@@ -2941,21 +2957,24 @@ Result DeleteDynamicTexture(HScene scene, const dmhash_t texture_hash)
         return n->m_Node.m_TextureType == NODE_TEXTURE_TYPE_TEXTURE_SET ? n->m_Node.m_FlipbookAnimHash : 0x0;
     }
 
-    Result SetNodeMaterial(HScene scene, HNode node, const char* material_id)
+    Result SetNodeMaterial(HScene scene, HNode node, dmhash_t material_id)
     {
-        dmhash_t material_id_hash = dmHashString64(material_id);
-
         InternalNode* n = GetNode(scene, node);
 
-        dmRender::HMaterial* material = scene->m_Materials.Get(material_id_hash);
+        dmRender::HMaterial* material = scene->m_Materials.Get(material_id);
         if (material == 0)
         {
             return RESULT_RESOURCE_NOT_FOUND;
         }
 
-        n->m_Node.m_MaterialNameHash = material_id_hash;
+        n->m_Node.m_MaterialNameHash = material_id;
         n->m_Node.m_Material         = (void*) *material;
-        return RESULT_OK;
+        return RESULT_OK;        
+    }
+
+    Result SetNodeMaterial(HScene scene, HNode node, const char* material_id)
+    {
+        return SetNodeMaterial(scene, node, dmHashString64(material_id));
     }
 
     Result SetNodeTexture(HScene scene, HNode node, dmhash_t texture_id)

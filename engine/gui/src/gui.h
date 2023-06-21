@@ -631,6 +631,8 @@ namespace dmGui
 
     Result AddMaterial(HScene scene, const char* material_name, void* material);
 
+    void* GetMaterial(HScene scene, dmhash_t material_hash);
+
     /**
      * Adds a layer with the specified name to the scene.
      * @param scene Scene to add the layer to
@@ -883,6 +885,9 @@ namespace dmGui
 
     Result SetNodeMaterial(HScene scene, HNode node, const char* material_id);
     void*  GetNodeMaterial(HScene scene, HNode node);
+
+    dmhash_t GetNodeMaterialId(HScene scene, HNode node);
+    Result SetNodeMaterial(HScene scene, HNode node, dmhash_t material_id);
 
     Result PlayNodeFlipbookAnim(HScene scene, HNode node, dmhash_t anim, float offset, float playback_rate, AnimationComplete anim_complete_callback = 0x0, void* callback_userdata1 = 0x0, void* callback_userdata2 = 0x0);
     Result PlayNodeFlipbookAnim(HScene scene, HNode node, const char* anim, float offset, float playback_rate, AnimationComplete anim_complete_callback = 0x0, void* callback_userdata1 = 0x0, void* callback_userdata2 = 0x0);

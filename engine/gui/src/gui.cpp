@@ -3,10 +3,10 @@
 // Copyright 2009-2014 Ragnar Svensson, Christian Murray
 // Licensed under the Defold License version 1.0 (the "License"); you may not use
 // this file except in compliance with the License.
-// 
+//
 // You may obtain a copy of the License, together with FAQs at
 // https://www.defold.com/license
-// 
+//
 // Unless required by applicable law or agreed to in writing, software distributed
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
@@ -2960,15 +2960,21 @@ Result DeleteDynamicTexture(HScene scene, const dmhash_t texture_hash)
     {
         InternalNode* n = GetNode(scene, node);
 
-        dmRender::HMaterial* material = scene->m_Materials.Get(material_id);
-        if (material == 0)
+        dmRender::HMaterial material = 0;
+
+        if (material_id)
         {
-            return RESULT_RESOURCE_NOT_FOUND;
+            dmRender::HMaterial* material_ptr = scene->m_Materials.Get(material_id);
+            if (material_ptr == 0)
+            {
+                return RESULT_RESOURCE_NOT_FOUND;
+            }
+            material = *material_ptr;
         }
 
         n->m_Node.m_MaterialNameHash = material_id;
-        n->m_Node.m_Material         = (void*) *material;
-        return RESULT_OK;        
+        n->m_Node.m_Material         = (void*) material;
+        return RESULT_OK;
     }
 
     Result SetNodeMaterial(HScene scene, HNode node, const char* material_id)

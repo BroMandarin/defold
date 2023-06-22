@@ -25,6 +25,7 @@ namespace dmGraphics
 {
     const static uint8_t DM_MAX_SET_COUNT              = 2;
     const static uint8_t DM_MAX_TEXTURE_UNITS          = 32;
+    const static uint8_t DM_MAX_VERTEX_BUFFERS         = 2;
     const static uint8_t DM_RENDERTARGET_BACKBUFFER_ID = 0;
     static const uint8_t DM_MAX_FRAMES_IN_FLIGHT       = 2; // In flight frames - number of concurrent frames being processed
 
@@ -386,8 +387,8 @@ namespace dmGraphics
         Viewport                        m_MainViewport;
         // Rendering state
         HRenderTarget                   m_CurrentRenderTarget;
-        DeviceBuffer*                   m_CurrentVertexBuffer;
-        VertexDeclaration*              m_CurrentVertexDeclaration;
+        DeviceBuffer*                   m_CurrentVertexBuffers[DM_MAX_VERTEX_BUFFERS];
+        VertexDeclaration*              m_CurrentVertexDeclarations[DM_MAX_VERTEX_BUFFERS];
         Program*                        m_CurrentProgram;
         Pipeline*                       m_CurrentPipeline;
         // Misc state
@@ -465,7 +466,7 @@ namespace dmGraphics
     VkResult CreateShaderModule(VkDevice vk_device,
         const void* source, uint32_t sourceSize, ShaderModule* shaderModuleOut);
     VkResult CreatePipeline(VkDevice vk_device, VkRect2D vk_scissor, VkSampleCountFlagBits vk_sample_count,
-        const PipelineState pipelineState, Program* program, HVertexDeclaration vertexDeclaration, RenderTarget* render_target, Pipeline* pipelineOut);
+        const PipelineState pipelineState, Program* program, HVertexDeclaration* vertexDeclarations, uint8_t vertex_declaration_count, RenderTarget* render_target, Pipeline* pipelineOut);
     // Reset functions
     void           ResetScratchBuffer(VkDevice vk_device, ScratchBuffer* scratchBuffer);
     // Destroy functions

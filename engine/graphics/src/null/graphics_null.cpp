@@ -511,7 +511,7 @@ namespace dmGraphics
         s.m_Source = 0x0;
     }
 
-    static void NullEnableVertexDeclaration(HContext context, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer)
+    static void NullEnableVertexDeclaration(HContext context, uint32_t unit, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer)
     {
         assert(context);
         assert(vertex_declaration);
@@ -536,12 +536,12 @@ namespace dmGraphics
         }
     }
 
-    static void NullEnableVertexDeclarationProgram(HContext context, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer, HProgram program)
+    static void NullEnableVertexDeclarationProgram(HContext context, uint32_t unit, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer, HProgram program)
     {
-        NullEnableVertexDeclaration(context, vertex_declaration, vertex_buffer);
+        NullEnableVertexDeclaration(context, unit, vertex_declaration, vertex_buffer);
     }
 
-    static void NullDisableVertexDeclaration(HContext context, HVertexDeclaration vertex_declaration)
+    static void NullDisableVertexDeclaration(HContext context, uint32_t unit, HVertexDeclaration vertex_declaration)
     {
         assert(context);
         assert(vertex_declaration);

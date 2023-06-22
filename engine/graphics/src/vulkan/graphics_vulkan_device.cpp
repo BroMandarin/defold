@@ -54,28 +54,6 @@ namespace dmGraphics
         memset(this, 0, sizeof(*this));
     }
 
-    static uint16_t FillVertexInputAttributeDesc(HVertexDeclaration vertexDeclaration, VkVertexInputAttributeDescription* vk_vertex_input_descs)
-    {
-        uint16_t num_attributes = 0;
-        for (uint16_t i = 0; i < vertexDeclaration->m_StreamCount; ++i)
-        {
-            if (vertexDeclaration->m_Streams[i].m_Location == 0xffff)
-            {
-                continue;
-            }
-
-            VertexDeclaration::Stream& stream_in           = vertexDeclaration->m_Streams[i];
-            vk_vertex_input_descs[num_attributes].binding  = 0;
-            vk_vertex_input_descs[num_attributes].location = stream_in.m_Location;
-            vk_vertex_input_descs[num_attributes].format   = stream_in.m_Format;
-            vk_vertex_input_descs[num_attributes].offset   = stream_in.m_Offset;
-
-            num_attributes++;
-        }
-
-        return num_attributes;
-    }
-
     VkResult DescriptorAllocator::Allocate(VkDevice vk_device, VkDescriptorSetLayout* vk_descriptor_set_layout, uint8_t setCount, VkDescriptorSet** vk_descriptor_set_out)
     {
         assert(m_DescriptorMax >= (m_DescriptorIndex + setCount));
@@ -904,31 +882,55 @@ bail:
         VK_COMPARE_OP_ALWAYS
     };
 
+    static uint16_t FillVertexInputAttributeDesc(HVertexDeclaration vertexDeclaration, uint8_t binding, VkVertexInputAttributeDescription* vk_vertex_input_descs)
+    {
+        uint16_t num_attributes = 0;
+        for (uint16_t i = 0; i < vertexDeclaration->m_StreamCount; ++i)
+        {
+            if (vertexDeclaration->m_Streams[i].m_Location == 0xffff)
+            {
+                continue;
+            }
+
+            VertexDeclaration::Stream& stream_in           = vertexDeclaration->m_Streams[i];
+            vk_vertex_input_descs[num_attributes].binding  = binding;
+            vk_vertex_input_descs[num_attributes].location = stream_in.m_Location;
+            vk_vertex_input_descs[num_attributes].format   = stream_in.m_Format;
+            vk_vertex_input_descs[num_attributes].offset   = stream_in.m_Offset;
+
+            num_attributes++;
+        }
+
+        return num_attributes;
+    }
+
     VkResult CreatePipeline(VkDevice vk_device, VkRect2D vk_scissor, VkSampleCountFlagBits vk_sample_count,
-        PipelineState pipelineState, Program* program, HVertexDeclaration vertexDeclaration,
+        PipelineState pipelineState, Program* program, HVertexDeclaration* vertexDeclarations, uint8_t vertex_declaration_count,
         RenderTarget* render_target, Pipeline* pipelineOut)
     {
         assert(pipelineOut && *pipelineOut == VK_NULL_HANDLE);
 
-        VkVertexInputAttributeDescription vk_vertex_input_descs[MAX_VERTEX_STREAM_COUNT];
-        uint16_t active_attributes = FillVertexInputAttributeDesc(vertexDeclaration, vk_vertex_input_descs);
+        uint32_t active_attributes = 0;
+        VkVertexInputAttributeDescription vk_vertex_input_descs[MAX_VERTEX_STREAM_COUNT] = {};
+        VkVertexInputBindingDescription vk_vx_input_description[DM_MAX_VERTEX_BUFFERS] = {};
+
+        for (int i = 0; i < vertex_declaration_count; ++i)
+        {
+            active_attributes += FillVertexInputAttributeDesc(vertexDeclarations[i], i, &vk_vertex_input_descs[active_attributes]);
+
+            vk_vx_input_description[i].binding   = i;
+            vk_vx_input_description[i].stride    = vertexDeclarations[i]->m_Stride;
+            vk_vx_input_description[i].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        }
+
         assert(active_attributes != 0);
-
-        VkVertexInputBindingDescription vk_vx_input_description;
-        memset(&vk_vx_input_description, 0, sizeof(vk_vx_input_description));
-
-        uint32_t stride = vertexDeclaration->m_Stride;
-
-        vk_vx_input_description.binding   = 0;
-        vk_vx_input_description.stride    = vertexDeclaration->m_Stride;
-        vk_vx_input_description.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
         VkPipelineVertexInputStateCreateInfo vk_vertex_input_info;
         memset(&vk_vertex_input_info, 0, sizeof(vk_vertex_input_info));
 
         vk_vertex_input_info.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        vk_vertex_input_info.vertexBindingDescriptionCount   = 1;
-        vk_vertex_input_info.pVertexBindingDescriptions      = &vk_vx_input_description;
+        vk_vertex_input_info.vertexBindingDescriptionCount   = vertex_declaration_count;
+        vk_vertex_input_info.pVertexBindingDescriptions      = vk_vx_input_description;
         vk_vertex_input_info.vertexAttributeDescriptionCount = active_attributes;
         vk_vertex_input_info.pVertexAttributeDescriptions    = vk_vertex_input_descs;
 

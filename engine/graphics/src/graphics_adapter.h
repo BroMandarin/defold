@@ -92,9 +92,9 @@ namespace dmGraphics
     typedef HVertexDeclaration (*NewVertexDeclarationStrideFn)(HContext context, HVertexStreamDeclaration stream_declaration, uint32_t stride);
     typedef bool (*SetStreamOffsetFn)(HVertexDeclaration vertex_declaration, uint32_t stream_index, uint16_t offset);
     typedef void (*DeleteVertexDeclarationFn)(HVertexDeclaration vertex_declaration);
-    typedef void (*EnableVertexDeclarationFn)(HContext context, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer);
-    typedef void (*EnableVertexDeclarationProgramFn)(HContext context, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer, HProgram program);
-    typedef void (*DisableVertexDeclarationFn)(HContext context, HVertexDeclaration vertex_declaration);
+    typedef void (*EnableVertexDeclarationFn)(HContext context,uint32_t unit, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer);
+    typedef void (*EnableVertexDeclarationProgramFn)(HContext context,uint32_t unit, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer, HProgram program);
+    typedef void (*DisableVertexDeclarationFn)(HContext context,uint32_t unit, HVertexDeclaration vertex_declaration);
     typedef void (*HashVertexDeclarationFn)(HashState32* state, HVertexDeclaration vertex_declaration);
     typedef uint32_t (*GetVertexDeclarationFn)(HVertexDeclaration vertex_declaration);
     typedef void (*DrawElementsFn)(HContext context, PrimitiveType prim_type, uint32_t first, uint32_t count, Type type, HIndexBuffer index_buffer);

@@ -1674,7 +1674,7 @@ static void LogFrameBufferError(GLenum status)
         delete vertex_declaration;
     }
 
-    static void OpenGLEnableVertexDeclaration(HContext context, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer)
+    static void OpenGLEnableVertexDeclaration(HContext context, uint32_t unit, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer)
     {
         assert(context);
         assert(vertex_buffer);
@@ -1736,7 +1736,7 @@ static void LogFrameBufferError(GLenum status)
         vertex_declaration->m_ModificationVersion = ((OpenGLContext*) context)->m_ModificationVersion;
     }
 
-    static void OpenGLEnableVertexDeclarationProgram(HContext _context, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer, HProgram program)
+    static void OpenGLEnableVertexDeclarationProgram(HContext _context, uint32_t unit, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer, HProgram program)
     {
         assert(_context);
         assert(vertex_buffer);
@@ -1775,7 +1775,7 @@ static void LogFrameBufferError(GLenum status)
         #undef BUFFER_OFFSET
     }
 
-    static void OpenGLDisableVertexDeclaration(HContext context, HVertexDeclaration vertex_declaration)
+    static void OpenGLDisableVertexDeclaration(HContext context, uint32_t unit, HVertexDeclaration vertex_declaration)
     {
         assert(context);
         assert(vertex_declaration);

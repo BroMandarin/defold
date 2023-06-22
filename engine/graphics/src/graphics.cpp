@@ -840,17 +840,17 @@ namespace dmGraphics
     {
         g_functions.m_DeleteVertexDeclaration(vertex_declaration);
     }
-    void EnableVertexDeclaration(HContext context, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer)
+    void EnableVertexDeclaration(HContext context, uint32_t unit, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer)
     {
-        g_functions.m_EnableVertexDeclaration(context, vertex_declaration, vertex_buffer);
+        g_functions.m_EnableVertexDeclaration(context, unit, vertex_declaration, vertex_buffer);
     }
-    void EnableVertexDeclaration(HContext context, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer, HProgram program)
+    void EnableVertexDeclaration(HContext context, uint32_t unit, HVertexDeclaration vertex_declaration, HVertexBuffer vertex_buffer, HProgram program)
     {
-        g_functions.m_EnableVertexDeclarationProgram(context, vertex_declaration, vertex_buffer, program);
+        g_functions.m_EnableVertexDeclarationProgram(context, unit, vertex_declaration, vertex_buffer, program);
     }
-    void DisableVertexDeclaration(HContext context, HVertexDeclaration vertex_declaration)
+    void DisableVertexDeclaration(HContext context, uint32_t unit, HVertexDeclaration vertex_declaration)
     {
-        g_functions.m_DisableVertexDeclaration(context, vertex_declaration);
+        g_functions.m_DisableVertexDeclaration(context, unit, vertex_declaration);
     }
     void HashVertexDeclaration(HashState32* state, HVertexDeclaration vertex_declaration)
     {

@@ -100,7 +100,6 @@ namespace dmGameSystem
         dmObjectPool<SpriteComponent>   m_Components;
         dmArray<dmRender::RenderObject*> m_RenderObjects;
         dmArray<float>                  m_BoundingVolumes;
-        dmHashTable32<dmGraphics::HVertexDeclaration> m_VertexDeclarations; // TODO: move to a central location (renderer? gamesys?)
         uint32_t                        m_RenderObjectsInUse;
         dmGraphics::HVertexBuffer       m_VertexBuffer;
         uint8_t*                        m_VertexBufferData;

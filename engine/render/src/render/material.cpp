@@ -36,10 +36,10 @@ namespace dmRender
     };
 
     static const HashToSemanticType g_DefaultAttributeHashToSemanticType[] = {
-        { dmHashString64("position"),   dmGraphics::VertexAttribute::SEMANTIC_TYPE_POSITION   },
-        { dmHashString64("texcoord0"),  dmGraphics::VertexAttribute::SEMANTIC_TYPE_TEXCOORD   },
-        { dmHashString64("color"),      dmGraphics::VertexAttribute::SEMANTIC_TYPE_COLOR      },
-        { dmHashString64("page_index"), dmGraphics::VertexAttribute::SEMANTIC_TYPE_PAGE_INDEX },
+        { VERTEX_STREAM_POSITION,   dmGraphics::VertexAttribute::SEMANTIC_TYPE_POSITION   },
+        { VERTEX_STREAM_TEXCOORD0,  dmGraphics::VertexAttribute::SEMANTIC_TYPE_TEXCOORD   },
+        { VERTEX_STREAM_COLOR,      dmGraphics::VertexAttribute::SEMANTIC_TYPE_COLOR      },
+        { VERTEX_STREAM_PAGE_INDEX, dmGraphics::VertexAttribute::SEMANTIC_TYPE_PAGE_INDEX },
     };
 
     static dmGraphics::VertexAttribute::SemanticType GetAttributeSemanticType(dmhash_t from_hash)
@@ -624,7 +624,11 @@ namespace dmRender
 
         dmGraphics::Type base_type = dmGraphics::GetGraphicsType(graphics_attribute.m_DataType); // GetBaseGraphicsType(material_attribute.m_Type);
         *value_byte_size           = dmGraphics::GetTypeSize(base_type) * graphics_attribute.m_ElementCount;
-        *value_ptr                 = &material->m_MaterialAttributeValues[material_attribute.m_ValueIndex];
+
+        if (value_ptr)
+        {
+            *value_ptr = &material->m_MaterialAttributeValues[material_attribute.m_ValueIndex];
+        }
     }
 
     void SetMaterialProgramAttributes(HMaterial material, const dmGraphics::VertexAttribute* attributes, uint32_t attributes_count) //dmhash_t name_hash, uint8_t* values, uint32_t value_byte_size)

@@ -179,12 +179,24 @@ namespace dmRender
         void Init();
 
         static const uint32_t MAX_TEXTURE_COUNT = 8;
+        static const uint32_t MAX_VERTEX_BUFFER_COUNT = 2;
         HNamedConstantBuffer            m_ConstantBuffer;
 
         dmVMath::Matrix4                m_WorldTransform;
         dmVMath::Matrix4                m_TextureTransform;
-        dmGraphics::HVertexBuffer       m_VertexBuffer;
-        dmGraphics::HVertexDeclaration  m_VertexDeclaration;
+        // Not sure about this..
+        union
+        {
+            dmGraphics::HVertexBuffer m_VertexBuffer;
+            dmGraphics::HVertexBuffer m_VertexBuffers[MAX_VERTEX_BUFFER_COUNT];
+        };
+
+        union
+        {
+            dmGraphics::HVertexDeclaration  m_VertexDeclaration;
+            dmGraphics::HVertexDeclaration  m_VertexDeclarations[MAX_VERTEX_BUFFER_COUNT];
+        };
+
         dmGraphics::HIndexBuffer        m_IndexBuffer;
         HMaterial                       m_Material;
         dmGraphics::HTexture            m_Textures[MAX_TEXTURE_COUNT];

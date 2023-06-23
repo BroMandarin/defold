@@ -774,12 +774,6 @@ namespace dmGameSystem
         dmRig::AttributeInfo material_attributes[dmGraphics::MAX_VERTEX_STREAM_COUNT];
         uint32_t material_attributes_count = FillMaterialAttributeInfos(material, material_attributes);
 
-        dmRig::AttributeInfo attributes[dmGraphics::MAX_VERTEX_STREAM_COUNT];
-        FillAttributeInfos(material_attributes, material_attributes_count,
-            component->m_Resource->m_Model->m_Attributes.m_Data,
-            component->m_Resource->m_Model->m_Attributes.m_Count,
-            attributes);
-
         uint32_t vertex_count = 0;
         uint32_t index_count = 0;
         uint32_t batchIndex = buf[*begin].m_MinorOrder;
@@ -827,6 +821,13 @@ namespace dmGameSystem
             {
                 dmVMath::Matrix4 model_matrix = dmTransform::ToMatrix4(render_item->m_Model->m_Local);
                 dmVMath::Matrix4 world_matrix = c->m_World * model_matrix;
+
+                // Can this be optimized?
+                dmRig::AttributeInfo attributes[dmGraphics::MAX_VERTEX_STREAM_COUNT];
+                FillAttributeInfos(material_attributes, material_attributes_count,
+                    c->m_Resource->m_Model->m_Attributes.m_Data,
+                    c->m_Resource->m_Model->m_Attributes.m_Count,
+                    attributes);
 
                 vb_end = dmRig::GenerateVertexDataFromAttributes(rig_context, c->m_RigInstance, render_item->m_Mesh, world_matrix, attributes, material_attributes_count, vertex_stride, vb_end);
             }

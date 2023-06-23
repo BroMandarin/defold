@@ -712,6 +712,39 @@ namespace dmGameSystem
         }
     }
 
+    // Todo: Merge with comp_sprite
+    static inline int32_t FindAttributeIndex(const dmGraphics::VertexAttribute* attributes, uint32_t attributes_count, dmhash_t name_hash)
+    {
+        for (int i = 0; i < attributes_count; ++i)
+        {
+            if (attributes[i].m_NameHash == name_hash)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Todo: Merge with comp_sprite
+    static void FillAttributeInfos(dmRig::AttributeInfo* material_infos, uint32_t material_infos_count, const dmGraphics::VertexAttribute* attributes, uint32_t attribute_count, dmRig::AttributeInfo* attribute_infos)
+    {
+        for (int i = 0; i < material_infos_count; ++i)
+        {
+            int attribute_index        = FindAttributeIndex(attributes, attribute_count, material_infos[i].m_Attribute->m_NameHash);
+            dmRig::AttributeInfo& info = attribute_infos[i];
+            info.m_Attribute           = material_infos[i].m_Attribute;
+            info.m_ValuePtr            = material_infos[i].m_ValuePtr;
+            info.m_ValueByteSize       = material_infos[i].m_ValueByteSize;
+
+            if (attribute_index >= 0)
+            {
+                info.m_Attribute = attributes + attribute_index;
+                dmGraphics::GetAttributeValues(attributes[attribute_index], &info.m_ValuePtr, &info.m_ValueByteSize);
+            }
+        }
+    }
+
+    // Todo: Merge with comp_sprite
     static uint32_t FillMaterialAttributeInfos(dmRender::HMaterial material, dmRig::AttributeInfo* infos)
     {
         const dmGraphics::VertexAttribute* attributes = 0;
@@ -738,8 +771,14 @@ namespace dmGameSystem
         dmRender::HMaterial material           = GetMaterial(component, component->m_Resource, material_index);
         dmGraphics::HVertexDeclaration vx_decl = dmRender::GetVertexDeclaration(material);
 
+        dmRig::AttributeInfo material_attributes[dmGraphics::MAX_VERTEX_STREAM_COUNT];
+        uint32_t material_attributes_count = FillMaterialAttributeInfos(material, material_attributes);
+
         dmRig::AttributeInfo attributes[dmGraphics::MAX_VERTEX_STREAM_COUNT];
-        uint32_t attributes_count = FillMaterialAttributeInfos(material, attributes);
+        FillAttributeInfos(material_attributes, material_attributes_count,
+            component->m_Resource->m_Model->m_Attributes.m_Data,
+            component->m_Resource->m_Model->m_Attributes.m_Count,
+            attributes);
 
         uint32_t vertex_count = 0;
         uint32_t index_count = 0;
@@ -789,7 +828,7 @@ namespace dmGameSystem
                 dmVMath::Matrix4 model_matrix = dmTransform::ToMatrix4(render_item->m_Model->m_Local);
                 dmVMath::Matrix4 world_matrix = c->m_World * model_matrix;
 
-                vb_end = dmRig::GenerateVertexDataFromAttributes(rig_context, c->m_RigInstance, render_item->m_Mesh, world_matrix, attributes, attributes_count, vertex_stride, vb_end);
+                vb_end = dmRig::GenerateVertexDataFromAttributes(rig_context, c->m_RigInstance, render_item->m_Mesh, world_matrix, attributes, material_attributes_count, vertex_stride, vb_end);
             }
         }
 

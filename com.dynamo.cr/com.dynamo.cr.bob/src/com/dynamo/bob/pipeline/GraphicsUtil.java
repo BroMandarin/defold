@@ -26,6 +26,16 @@ import com.google.protobuf.ByteString;
 
 public class GraphicsUtil {
 
+    public static VertexAttribute getAttributeByName(List<VertexAttribute> materialAttributes, String attributeName)
+    {
+        for (VertexAttribute attr : materialAttributes) {
+            if (attr.getName().equals(attributeName)) {
+                return attr;
+            }
+        }
+        return null;
+    }
+
 	private static void validateAttribute(VertexAttribute attr, VertexAttribute.DataType dataType) throws CompileExceptionError
     {
         if (dataType == VertexAttribute.DataType.TYPE_BYTE && !(attr.hasBinaryValues() || attr.hasIntValues()))

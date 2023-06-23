@@ -3,6 +3,7 @@ package dmModelDDF;
 
 import "ddf/ddf_extensions.proto";
 import "ddf/ddf_math.proto";
+import "graphics/graphics_ddf.proto";
 
 option java_package = "com.dynamo.gamesys.proto";
 option java_outer_classname = "ModelProto";
@@ -18,6 +19,8 @@ message ModelDesc
     optional string animations  = 6 [(resource)=true];
     optional string default_animation  = 7;
 
+    repeated dmGraphics.VertexAttribute attributes = 8;
+
     optional string name        = 10; // Deprecated
 }
 
@@ -27,6 +30,7 @@ message Model
     required string material    = 2 [(resource)=true];
     repeated string textures    = 3 [(resource)=true];
     optional string default_animation  = 4;
+    repeated dmGraphics.VertexAttribute attributes = 5;
 }
 
 message ResetConstant

@@ -323,16 +323,6 @@ public class ProtoBuilders {
             return task.build();
         }
 
-        private VertexAttribute FindMaterialAttribute(List<VertexAttribute> materialAttributes, String attributeName)
-        {
-            for (VertexAttribute attr : materialAttributes) {
-                if (attr.getName().equals(attributeName)) {
-                    return attr;
-                }
-            }
-            return null;
-        }
-
         @Override
         protected SpriteDesc.Builder transform(Task<Void> task, IResource resource, SpriteDesc.Builder messageBuilder)
                 throws IOException, CompileExceptionError {
@@ -353,7 +343,7 @@ public class ProtoBuilders {
 
                 for (int i=0; i < messageBuilder.getAttributesCount(); i++) {
                     VertexAttribute spriteAttribute = messageBuilder.getAttributes(i);
-                    VertexAttribute materialAttribute = FindMaterialAttribute(materialAttributes, spriteAttribute.getName());
+                    VertexAttribute materialAttribute = GraphicsUtil.getAttributeByName(materialAttributes, spriteAttribute.getName());
 
                     if (materialAttribute != null) {
                         spriteAttributeOverrides.add(GraphicsUtil.buildVertexAttribute(spriteAttribute, materialAttribute.getDataType()));

@@ -358,8 +358,10 @@
     (open-resource! state resource lines)))
 
 (defn- sync-modified-lines-of-existing-node! [state resource resource-node new-lines evaluation-context]
-  (let [clean (= (g/node-value resource-node :source-value evaluation-context)
-                 (hash new-lines))]
+  (let [resource-type (resource/resource-type resource)
+        source-value-fn (:source-value-fn resource-type identity)
+        clean (= (g/node-value resource-node :source-value evaluation-context)
+                 (source-value-fn new-lines))]
     (if clean
       (cond
         ;; viewed implies open
